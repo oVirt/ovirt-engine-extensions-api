@@ -1,0 +1,5 @@
+dnf-utils
+git
+java-11-openjdk-devel
+maven
+maven-local
