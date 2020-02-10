@@ -14,7 +14,7 @@
 
   <groupId>org.ovirt.engine.api</groupId>
   <artifactId>ovirt-engine-extensions-api</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 
   <name>oVirt Engine Extensions API</name>
   <description>This package contains the oVirt Engine Extensions API.</description>
@@ -32,7 +32,7 @@
     <connection>scm:git:git://gerrit.ovirt.org/ovirt-engine-extensions-api.git</connection>
     <developerConnection>scm:git:git://gerrit.ovirt.org/ovirt-engine-extensions-api.git</developerConnection>
     <url>git://gerrit.ovirt.org/ovirt-engine-extensions-api.git</url>
-    <tag>HEAD</tag>
+    <tag>ovirt-engine-extensions-api-1.0.0</tag>
   </scm>
 
   <properties>

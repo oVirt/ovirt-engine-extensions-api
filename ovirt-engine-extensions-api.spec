@@ -83,6 +83,6 @@ export JAVA_HOME="/usr/lib/jvm/java-11-openjdk"
 
 
 %changelog
-* Fri Feb 7 2020 Martin Perina <mperina@redhat.com> 1.0.0-1
+* Mon Feb 10 2020 Martin Perina <mperina@redhat.com> 1.0.0-1
 - Extracted from ovirt-engine into standalone project
 - Bump requirements to JDK 11
