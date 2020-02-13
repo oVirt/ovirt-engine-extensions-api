@@ -38,19 +38,22 @@ mvn help:evaluate -Dexpression=project.version -gs "$MAVEN_SETTINGS" # downloads
 VERSION=$(mvn help:evaluate -Dexpression=project.version -gs "$MAVEN_SETTINGS" 2>/dev/null| grep -v "^\[")
 VERSION=${VERSION/-SNAPSHOT/-0.$(git rev-list HEAD | wc -l).$(date +%04Y%02m%02d%02H%02M)}
 IFS='-' read -ra VERSION <<< "$VERSION"
+RELEASE=${VERSION[1]-1}
 
 # Prepare source archive
 [[ -d ${HOME}/rpmbuild/SOURCES ]] || mkdir -p ${HOME}/rpmbuild/SOURCES
 git archive --format=tar HEAD | gzip -9 > ${HOME}/rpmbuild/SOURCES/ovirt-engine-extensions-api-$VERSION.tar.gz
 
-echo `rpm --eval "Fedora:0%{fedora} ; RHEL: 0%{rhel}"`
+# Set version and release
+sed \
+    -e "s|@VERSION@|${VERSION}|g" \
+    -e "s|@RELEASE@|${RELEASE}|g" \
+    < ovirt-engine-extensions-api.spec.in \
+    > ovirt-engine-extensions-api.spec
 
 rpmbuild \
     --define "_topmdir $PWD/rpmbuild" \
     --define "_rpmdir $PWD/rpmbuild" \
-    --define "_version $VERSION" \
-    --define "_release ${VERSION[1]-1}" \
-    --define "with_extra_maven_opts -gs $MAVEN_SETTINGS" \
     -ba --nodeps ovirt-engine-extensions-api.spec
 
 # Move RPMs to exported artifacts

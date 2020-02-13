@@ -1,16 +1,6 @@
-# The version macro to be redefined by Jenkins build when needed
-%define project_version 1.0.0-SNAPSHOT
-%define project_release 1
-
-%{!?_version: %define _version %{project_version}}
-%{!?_release: %define _release %{project_release}}
-%define mvn_sed sed -e 's/mvn(\\([^)]*\\))\\( [>=<]\\{1,2\\} [^ ]\\{1,\\}\\)\\{0,1\\}/\\1/g'
-%{!?_licensedir:%global license %doc}
-
-
 Name:		ovirt-engine-extensions-api
-Version:	%{_version}
-Release:	%{_release}%{?dist}
+Version:	@VERSION@
+Release:	@RELEASE@%{?dist}
 Summary:	oVirt engine extensions API
 Group:		%{ovirt_product_group}
 License:	ASL 2.0
