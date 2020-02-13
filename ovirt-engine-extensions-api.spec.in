@@ -29,6 +29,7 @@ BuildRequires:	mvn(org.apache.maven.plugins:maven-javadoc-plugin)
 Requires:	java-11-openjdk-headless >= 1:11.0.0
 Requires:	javapackages-filesystem
 
+Obsoletes:	ovirt-engine-extensions-api-impl
 
 %description
 %{name} provides classes that define API for oVirt engine extensions
