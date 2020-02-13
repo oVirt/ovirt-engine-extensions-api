@@ -17,7 +17,6 @@ BuildArch:	noarch
 BuildRequires:	java-11-openjdk-devel
 BuildRequires:	maven-local
 BuildRequires:	mvn(org.apache.maven.plugins:maven-compiler-plugin)
-BuildRequires:	mvn(org.apache.maven.plugins:maven-release-plugin)
 BuildRequires:	mvn(org.apache.maven.plugins:maven-source-plugin)
 
 # On EL8 maven-javadoc-plugin has been merged into xmvn, but on Fedora
@@ -52,6 +51,10 @@ oVirt engine extensions API documentation
 %if 0%{?rhel} >= 8
 %pom_remove_plugin :maven-javadoc-plugin pom.xml
 %endif
+
+# maven-release-plugin is not used during package build, so we can remove it
+# from pom.xml
+%pom_remove_plugin :maven-release-plugin pom.xml
 
 
 %build
