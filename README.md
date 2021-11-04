@@ -1,5 +1,7 @@
 # oVirt engine extensions API
 
+[![Copr build status](https://copr.fedorainfracloud.org/coprs/ovirt/ovirt-master-snapshot/package/ovirt-engine-extensions-api/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/ovirt/ovirt-master-snapshot/package/ovirt-engine-extensions-api/)
+
 Welcome to the oVirt engine extensions API source repository.
 
 This repository is hosted on [gerrit.ovirt.org:ovirt-engine-extensions-api](https://gerrit.ovirt.org/#/admin/projects/ovirt-engine-extensions-api)
