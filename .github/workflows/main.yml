@@ -16,25 +16,26 @@ jobs:
     steps:
     - name: Enable Virt SIG repo
       run: |
-        echo "[ovirt-master-centos-stream-ovirt45-testing]\n" \
-             "name=CentOS Stream 8 - oVirt 4.5 - testing\n" \
-             "baseurl=https://buildlogs.centos.org/centos/8-stream/virt/x86_64/ovirt-45/\n" \
-             "gpgcheck=0\n" \
-             "enabled=1\n" \
-             "module_hotfixes=1" \
-        > /etc/yum.repos.d/ovirt-master-centos-stream-ovirt45-testing.repo
+        REPO_FILE="/etc/yum.repos.d/virt8s-ovirt-45-el8s.repo"
+        printf "[ovirt-master-centos-stream-ovirt45-testing]\n" > ${REPO_FILE}
+        printf "name=CentOS Stream 8 - oVirt 4.5 - testing\n" >> ${REPO_FILE}
+        printf "baseurl=https://buildlogs.centos.org/centos/8-stream/virt/x86_64/ovirt-45/\n" >> ${REPO_FILE}
+        printf "gpgcheck=0\n" >> ${REPO_FILE}
+        printf "enabled=1\n" >> ${REPO_FILE}
+        printf "module_hotfixes=1" >> ${REPO_FILE}
 
     - name: Prepare build environment
       run: |
-           mkdir -p ${PWD}/tmp.repos/BUILD
-           dnf install -y --setopt=tsflags=nodocs dnf-utils git java-11-openjdk-devel maven sed
+           dnf config-manager --enable powertools
+           dnf module enable -y pki-deps javapackages-tools
+           dnf install -y dnf-utils git java-11-openjdk-devel maven rpm-build sed
 
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+    - name: Checkout sources
+      uses: actions/checkout@v2
 
     - name: Perform build
-      run: .automation/build-artifacts.sh
+      run: |
+        .automation/build-artifacts.sh $(git rev-parse --short $GITHUB_SHA)
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
