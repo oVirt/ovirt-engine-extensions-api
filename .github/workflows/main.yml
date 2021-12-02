@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-cs8:
+    name: CentOS Stream 8 build
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/centos/centos:stream8
+
+    steps:
+    - name: Enable Virt SIG repo
+      run: |
+        echo "[ovirt-master-centos-stream-ovirt45-testing]\n" \
+             "name=CentOS Stream 8 - oVirt 4.5 - testing\n" \
+             "baseurl=https://buildlogs.centos.org/centos/8-stream/virt/x86_64/ovirt-45/\n" \
+             "gpgcheck=0\n" \
+             "enabled=1\n" \
+             "module_hotfixes=1" \
+        > /etc/yum.repos.d/ovirt-master-centos-stream-ovirt45-testing.repo
+
+    - name: Prepare build environment
+      run: |
+           mkdir -p ${PWD}/tmp.repos/BUILD
+           dnf install -y --setopt=tsflags=nodocs dnf-utils git java-11-openjdk-devel maven sed
+
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Perform build
+      run: .automation/build-artifacts.sh
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: artifacts
+        path: exported-artifacts/
+
