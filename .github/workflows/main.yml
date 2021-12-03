@@ -33,6 +33,13 @@ jobs:
     - name: Checkout sources
       uses: actions/checkout@v2
 
+    - name: Use cache for maven
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: cs8-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: cs8-m2
+
     - name: Perform build
       run: |
         .automation/build-artifacts.sh $(git rev-parse --short $GITHUB_SHA)
