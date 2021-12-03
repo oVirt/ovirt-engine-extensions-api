@@ -1,17 +1,19 @@
 #!/bin/bash -xe
 
-# Build RPMs
-mvn help:evaluate -Dexpression=project.version -gs "$MAVEN_SETTINGS" # downloads and installs the necessary jars
+# git hash of current commit should be passed as the 1st paraameter
+GIT_HASH=$1
 
 # Prepare the version string (with support for SNAPSHOT versioning)
-VERSION=$(mvn help:evaluate -Dexpression=project.version -gs "$MAVEN_SETTINGS" 2>/dev/null| grep -v "^\[")
-VERSION=${VERSION/-SNAPSHOT/-0.$(git rev-list HEAD | wc -l).$(date +%04Y%02m%02d%02H%02M)}
+VERSION=$(mvn help:evaluate  -q -DforceStdout -Dexpression=project.version)
+VERSION=${VERSION/-SNAPSHOT/-0.${GIT_HASH}.$(date +%04Y%02m%02d%02H%02M)}
 IFS='-' read -ra VERSION <<< "$VERSION"
 RELEASE=${VERSION[1]-1}
 
 # Prepare source archive
 [[ -d ${HOME}/rpmbuild/SOURCES ]] || mkdir -p ${HOME}/rpmbuild/SOURCES
 git archive --format=tar HEAD | gzip -9 > ${HOME}/rpmbuild/SOURCES/ovirt-engine-extensions-api-$VERSION.tar.gz
+
+tar tf ${HOME}/rpmbuild/SOURCES/ovirt-engine-extensions-api-$VERSION.tar.gz
 
 # Set version and release
 sed \
@@ -20,11 +22,21 @@ sed \
     < ovirt-engine-extensions-api.spec.in \
     > ovirt-engine-extensions-api.spec
 
+# Build source package
 rpmbuild \
-    --define "_topmdir $PWD/rpmbuild" \
-    --define "_rpmdir $PWD/rpmbuild" \
-    -ba --nodeps ovirt-engine-extensions-api.spec
+    --define "_topmdir $HOME/rpmbuild" \
+    --define "_rpmdir $HOME/rpmbuild" \
+    -bs ovirt-engine-extensions-api.spec
+
+# Install build dependencies
+dnf builddep -y $HOME/rpmbuild/SRPMS/*src.rpm
+
+# Build binary package
+rpmbuild \
+    --define "_topmdir $HOME/rpmbuild" \
+    --define "_rpmdir $HOME/rpmbuild" \
+    --rebuild $HOME/rpmbuild/SRPMS/*src.rpm
 
 # Move RPMs to exported artifacts
 [[ -d exported-artifacts ]] || mkdir -p exported-artifacts
-find rpmbuild -iname \*rpm | xargs mv -t exported-artifacts
+find $HOME/rpmbuild -iname \*rpm | xargs mv -t exported-artifacts
