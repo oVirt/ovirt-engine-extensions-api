@@ -54,3 +54,50 @@ jobs:
         name: artifacts
         path: exported-artifacts/
 
+  build-cs9:
+    name: CentOS Stream 9 build
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/centos/centos:stream9
+
+    steps:
+    - name: Enable Virt SIG repo
+      run: |
+        REPO_FILE="/etc/yum.repos.d/virt8s-ovirt-45-el9s.repo"
+        printf "[ovirt-master-centos-stream-ovirt45-testing]\n" > ${REPO_FILE}
+        printf "name=CentOS Stream 9 - oVirt 4.5 - testing\n" >> ${REPO_FILE}
+        printf "baseurl=https://buildlogs.centos.org/centos/9-stream/virt/x86_64/ovirt-45/\n" >> ${REPO_FILE}
+        printf "gpgcheck=0\n" >> ${REPO_FILE}
+        printf "enabled=1\n" >> ${REPO_FILE}
+        printf "module_hotfixes=1" >> ${REPO_FILE}
+
+    - name: Prepare build environment
+      run: |
+           dnf install -y dnf-plugins-core
+           dnf config-manager --enable crb
+           dnf install -y createrepo_c dnf-utils git java-11-openjdk-devel maven rpm-build sed
+
+    - name: Checkout sources
+      uses: actions/checkout@v2
+
+    - name: Use cache for maven
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Perform build
+      run: |
+        .automation/build-artifacts.sh $(git rev-parse --short $GITHUB_SHA)
+
+    - name: Create DNF repository
+      run: createrepo_c exported-artifacts/
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: artifacts
+        path: exported-artifacts/
+
