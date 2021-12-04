@@ -28,7 +28,7 @@ jobs:
       run: |
            dnf config-manager --enable powertools
            dnf module enable -y pki-deps javapackages-tools
-           dnf install -y dnf-utils git java-11-openjdk-devel maven rpm-build sed
+           dnf install -y createrepo_c dnf-utils git java-11-openjdk-devel maven rpm-build sed
 
     - name: Checkout sources
       uses: actions/checkout@v2
@@ -44,6 +44,9 @@ jobs:
     - name: Perform build
       run: |
         .automation/build-artifacts.sh $(git rev-parse --short $GITHUB_SHA)
+
+    - name: Create DNF repository
+      run: createrepo_c exported-artifacts/
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
