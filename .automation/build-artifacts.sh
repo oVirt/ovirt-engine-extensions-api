@@ -3,6 +3,9 @@
 # git hash of current commit should be passed as the 1st paraameter
 GIT_HASH=$1
 
+# Directory, where build artifacts will be stored, should be passed as the 2nd parameter
+ARTIFACTS_DIR=${2:-exported-artifacts}
+
 # Prepare the version string (with support for SNAPSHOT versioning)
 VERSION=$(mvn help:evaluate  -q -DforceStdout -Dexpression=project.version)
 VERSION=${VERSION/-SNAPSHOT/-0.${GIT_HASH}.$(date +%04Y%02m%02d%02H%02M)}
@@ -38,5 +41,5 @@ rpmbuild \
     --rebuild $HOME/rpmbuild/SRPMS/*src.rpm
 
 # Move RPMs to exported artifacts
-[[ -d exported-artifacts ]] || mkdir -p exported-artifacts
-find $HOME/rpmbuild -iname \*rpm | xargs mv -t exported-artifacts
+[[ -d $ARTIFACTS_DIR ]] || mkdir -p $ARTIFACTS_DIR
+find $HOME/rpmbuild -iname \*rpm | xargs mv -t $ARTIFACTS_DIR

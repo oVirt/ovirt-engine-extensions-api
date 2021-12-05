@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: quay.io/centos/centos:stream8
+    env:
+      ARTIFACTS_DIR: exported-artifacts/centos-stream-8-x86_64
 
     steps:
     - name: Enable Virt SIG repo
@@ -29,6 +31,8 @@ jobs:
            dnf config-manager --enable powertools
            dnf module enable -y pki-deps javapackages-tools
            dnf install -y createrepo_c dnf-utils git java-11-openjdk-devel maven rpm-build sed
+           mkdir -p $ARTIFACTS_DIR
+           ls -al
 
     - name: Checkout sources
       uses: actions/checkout@v2
@@ -43,10 +47,10 @@ jobs:
 
     - name: Perform build
       run: |
-        .automation/build-artifacts.sh $(git rev-parse --short $GITHUB_SHA)
+        .automation/build-artifacts.sh $(git rev-parse --short $GITHUB_SHA) $ARTIFACTS_DIR
 
     - name: Create DNF repository
-      run: createrepo_c exported-artifacts/
+      run: createrepo_c $ARTIFACTS_DIR
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
@@ -59,6 +63,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: quay.io/centos/centos:stream9
+    env:
+      ARTIFACTS_DIR: exported-artifacts/centos-stream-9-x86_64
 
     steps:
     - name: Enable Virt SIG repo
@@ -76,6 +82,7 @@ jobs:
            dnf install -y dnf-plugins-core
            dnf config-manager --enable crb
            dnf install -y createrepo_c dnf-utils git java-11-openjdk-devel maven rpm-build sed
+           mkdir -p $ARTIFACTS_DIR
 
     - name: Checkout sources
       uses: actions/checkout@v2
@@ -90,10 +97,10 @@ jobs:
 
     - name: Perform build
       run: |
-        .automation/build-artifacts.sh $(git rev-parse --short $GITHUB_SHA)
+        .automation/build-artifacts.sh $(git rev-parse --short $GITHUB_SHA) $ARTIFACTS_DIR
 
     - name: Create DNF repository
-      run: createrepo_c exported-artifacts/
+      run: createrepo_c $ARTIFACTS_DIR
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
