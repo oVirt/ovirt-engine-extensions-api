@@ -1,0 +1,57 @@
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: centos-stream-8
+            shortcut: cs8
+            container-name: stream8
+          - name: centos-stream-9
+            shortcut: cs9
+            container-name: stream9
+
+    name: ${{ matrix.name }}
+
+    container:
+      image: quay.io/centos/centos:${{ matrix.container-name }}
+
+    env:
+      ARTIFACTS_DIR: exported-artifacts/${{ matrix.name }}
+
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v2
+
+    - name: Prepare build environment
+      run: |
+        .automation/prepare-env-${{ matrix.shortcut }}.sh
+
+    - name: Use cache for maven
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Perform build
+      run: |
+        .automation/build-artifacts.sh ${GITHUB_SHA::7} $ARTIFACTS_DIR
+
+    - name: Create DNF repository
+      run: |
+        createrepo_c $ARTIFACTS_DIR
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: artifacts
+        path: exported-artifacts/
