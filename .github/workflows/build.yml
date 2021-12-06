@@ -27,6 +27,12 @@ jobs:
       ARTIFACTS_DIR: exported-artifacts/${{ matrix.name }}
 
     steps:
+    - name: Install git package
+      # git needs to be installed before checkout action invocation, otherwise
+      # the action won't fetch git details correctly
+      run: |
+        dnf install -y git
+
     - name: Checkout sources
       uses: actions/checkout@v2
 
@@ -44,7 +50,7 @@ jobs:
 
     - name: Perform build
       run: |
-        .automation/build-artifacts.sh ${GITHUB_SHA::7} $ARTIFACTS_DIR
+        .automation/build-artifacts.sh $(git rev-parse --short $GITHUB_SHA) $ARTIFACTS_DIR
 
     - name: Create DNF repository
       run: |
