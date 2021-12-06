@@ -14,7 +14,7 @@ RELEASE=${VERSION[1]-1}
 
 # Prepare source archive
 [[ -d ${HOME}/rpmbuild/SOURCES ]] || mkdir -p ${HOME}/rpmbuild/SOURCES
-tar czf ${HOME}/rpmbuild/SOURCES/ovirt-engine-extensions-api-$VERSION.tar.gz .
+git archive --format=tar HEAD | gzip -9 > ${HOME}/rpmbuild/SOURCES/ovirt-engine-extensions-api-$VERSION.tar.gz
 
 # Set version and release
 sed \
