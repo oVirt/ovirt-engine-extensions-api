@@ -33,10 +33,8 @@ jobs:
       if: ${{ matrix.shortcut == 'cs8' }}
       run: |
         # Install oVirt repositories
-        rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
-        dnf install -y \
-            --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-8-x86_64/ \
-            ovirt-release-master
+        dnf copr enable -y ovirt/ovirt-master-snapshot centos-stream-8
+        dnf install -y ovirt-release-master
 
         # Configure CS8 repositories
         dnf config-manager --enable powertools
@@ -50,7 +48,7 @@ jobs:
 
         # Install oVirt repositories
         dnf copr enable -y ovirt/ovirt-master-snapshot
-        yum install -y ovirt-release-master
+        dnf install -y ovirt-release-master
 
         # Configure CS9 repositories
         dnf config-manager --enable crb
