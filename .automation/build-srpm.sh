@@ -30,5 +30,5 @@ sed \
 # Build source package
 rpmbuild \
     --define "_topmdir $HOME/rpmbuild" \
-    --define "_rpmdir $HOME/rpmbuild" \
+    --nodeps \
     -bs ovirt-engine-extensions-api.spec
