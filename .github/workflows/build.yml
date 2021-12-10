@@ -79,7 +79,7 @@ jobs:
 
     - name: Perform build
       run: |
-        .automation/build-artifacts.sh $(git rev-parse --short $GITHUB_SHA) $ARTIFACTS_DIR
+        .automation/build-artifacts.sh $ARTIFACTS_DIR
 
     - name: Create DNF repository
       run: |
