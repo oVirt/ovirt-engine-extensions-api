@@ -1,10 +1,14 @@
 #!/bin/bash -xe
 
 # git hash of current commit should be passed as the 1st paraameter
-GIT_HASH=$1
+if [ "${GITHUB_SHA}" == "" ]; then
+  GIT_HASH=$(git rev-list HEAD | wc -l)
+else
+  GIT_HASH=$(git rev-parse --short $GITHUB_SHA)
+fi
 
-# Directory, where build artifacts will be stored, should be passed as the 2nd parameter
-ARTIFACTS_DIR=${2:-exported-artifacts}
+# Directory, where build artifacts will be stored, should be passed as the 1st parameter
+ARTIFACTS_DIR=${1:-exported-artifacts}
 
 # Prepare the version string (with support for SNAPSHOT versioning)
 VERSION=$(mvn help:evaluate  -q -DforceStdout -Dexpression=project.version)
@@ -28,16 +32,3 @@ rpmbuild \
     --define "_topmdir $HOME/rpmbuild" \
     --define "_rpmdir $HOME/rpmbuild" \
     -bs ovirt-engine-extensions-api.spec
-
-# Install build dependencies
-dnf builddep -y $HOME/rpmbuild/SRPMS/*src.rpm
-
-# Build binary package
-rpmbuild \
-    --define "_topmdir $HOME/rpmbuild" \
-    --define "_rpmdir $HOME/rpmbuild" \
-    --rebuild $HOME/rpmbuild/SRPMS/*src.rpm
-
-# Move RPMs to exported artifacts
-[[ -d $ARTIFACTS_DIR ]] || mkdir -p $ARTIFACTS_DIR
-find $HOME/rpmbuild -iname \*rpm | xargs mv -t $ARTIFACTS_DIR
