@@ -20,8 +20,6 @@ RELEASE=${VERSION[1]-1}
 [[ -d rpmbuild/SOURCES ]] || mkdir -p rpmbuild/SOURCES
 git archive --format=tar HEAD | gzip -9 > rpmbuild/SOURCES/ovirt-engine-extensions-api-$VERSION.tar.gz
 
-ls -al
-
 # Set version and release
 sed \
     -e "s|@VERSION@|${VERSION}|g" \
