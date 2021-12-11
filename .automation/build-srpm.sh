@@ -17,8 +17,10 @@ IFS='-' read -ra VERSION <<< "$VERSION"
 RELEASE=${VERSION[1]-1}
 
 # Prepare source archive
-[[ -d ${HOME}/rpmbuild/SOURCES ]] || mkdir -p ${HOME}/rpmbuild/SOURCES
-git archive --format=tar HEAD | gzip -9 > ${HOME}/rpmbuild/SOURCES/ovirt-engine-extensions-api-$VERSION.tar.gz
+[[ -d rpmbuild/SOURCES ]] || mkdir -p rpmbuild/SOURCES
+git archive --format=tar HEAD | gzip -9 > rpmbuild/SOURCES/ovirt-engine-extensions-api-$VERSION.tar.gz
+
+ls -al
 
 # Set version and release
 sed \
@@ -29,6 +31,5 @@ sed \
 
 # Build source package
 rpmbuild \
-    --define "_topmdir $HOME/rpmbuild" \
-    --nodeps \
+    -D "_topdir rpmbuild" \
     -bs ovirt-engine-extensions-api.spec
