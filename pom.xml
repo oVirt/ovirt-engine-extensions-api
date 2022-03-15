@@ -41,9 +41,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git://gerrit.ovirt.org/ovirt-engine-extensions-api.git</connection>
-    <developerConnection>scm:git:git://gerrit.ovirt.org/ovirt-engine-extensions-api.git</developerConnection>
-    <url>git://gerrit.ovirt.org/ovirt-engine-extensions-api.git</url>
+    <url>https://github.com/oVirt/ovirt-engine-extensions-api</url>
+    <connection>scm:git:https://github.com/oVirt/ovirt-engine-extensions-api.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:oVirt/ovirt-engine-extensions-api.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
