@@ -19,6 +19,9 @@ BuildRequires:	maven-local
 BuildRequires:	mvn(org.apache.maven.plugins:maven-compiler-plugin)
 BuildRequires:	mvn(org.apache.maven.plugins:maven-source-plugin)
 
+# Required because of old xmvn version in COPR
+BuildRequires: maven
+
 # On EL8 maven-javadoc-plugin has been merged into xmvn, but on Fedora
 # we still need to require it
 %if 0%{?fedora} >= 30
