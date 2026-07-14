@@ -1,6 +1,6 @@
 Name:		ovirt-engine-extensions-api
-Version:	@VERSION@
-Release:	@RELEASE@%{?dist}
+Version:	@PACKAGE_RPM_VERSION@
+Release:	@PACKAGE_RPM_RELEASE@%{?release_suffix}%{?dist}
 Summary:	oVirt engine extensions API
 Group:		%{ovirt_product_group}
 License:	ASL 2.0
